@@ -1,3 +1,13 @@
+from data.data_loader import DataLoader
+from strategies.rsi_strategy import RSIStrategy
+from strategies.bollinger_strategy import BollingerStrategy
+from engine.strategy_engine import StrategyEngine
+from backtesting.backtester import Backtester
+from engine.execution_engine import ExecutionEngine
+
+SYMBOL = "BTC/USDT"
+TIMEFRAME = "1h"
+
 if __name__ == "__main__":
     loader = DataLoader()
 
@@ -22,7 +32,7 @@ if __name__ == "__main__":
 
     for i in range(100, len(df)):
         sub_df = df.iloc[:i].copy()
-        price = df['close'].iloc[i]
+        price = df["close"].iloc[i]
 
         signal = strategy_engine.get_signal(sub_df)
         execution_engine.execute(signal, price)
