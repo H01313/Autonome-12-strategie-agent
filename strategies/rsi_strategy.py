@@ -10,6 +10,7 @@ class RSIStrategy(BaseStrategy):
         if len(df) < self.period:
             return "HOLD"
 
+        df = df.copy()
         df["rsi"] = rsi(df, self.period)
         value = df["rsi"].iloc[-1]
 
