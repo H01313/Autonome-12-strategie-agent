@@ -21,7 +21,6 @@ class DataLoader:
         )
 
         df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
-
         df = df.drop_duplicates()
         df = df.sort_values("timestamp")
 
