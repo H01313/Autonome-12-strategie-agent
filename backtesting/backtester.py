@@ -3,22 +3,19 @@ class Backtester:
         balance = initial_balance
         position = 0
         entry_price = 0
-
-        fee = 0.001  # 0.1%
+        fee = 0.001
 
         for i in range(50, len(df)):
             sub_df = df.iloc[:i].copy()
-            price = df['close'].iloc[i]
+            price = df["close"].iloc[i]
 
             signal = strategy_engine.get_signal(sub_df)
 
-            # ENTRY
             if signal == "BUY" and position == 0:
                 position = (balance * (1 - fee)) / price
                 entry_price = price
                 balance = 0
 
-            # EXIT
             elif position > 0:
                 change = (price - entry_price) / entry_price
 
@@ -26,8 +23,7 @@ class Backtester:
                     balance = position * price * (1 - fee)
                     position = 0
 
-        # CLOSE OPEN POSITION
         if position > 0:
-            balance = position * df['close'].iloc[-1] * (1 - fee)
+            balance = position * df["close"].iloc[-1] * (1 - fee)
 
         return balance
