@@ -8,12 +8,15 @@ from engine.execution_engine import ExecutionEngine
 SYMBOL = "BTC/USDT"
 TIMEFRAME = "1h"
 
+
 if __name__ == "__main__":
     loader = DataLoader()
-
     df = loader.fetch_ohlcv(SYMBOL, TIMEFRAME, limit=1000)
 
-    # DROP NaN (CRUCIAAL)
+    if df.empty:
+        print("No data fetched.")
+        raise SystemExit(1)
+
     df = df.dropna().reset_index(drop=True)
 
     strategies = [RSIStrategy(), BollingerStrategy()]
@@ -21,13 +24,10 @@ if __name__ == "__main__":
 
     strategy_engine = StrategyEngine(strategies, weights, threshold=1)
 
-    # BACKTEST
     backtester = Backtester()
     result = backtester.run(df, strategy_engine)
-
     print(f"Backtest final balance: {result}")
 
-    # PAPER TRADING
     execution_engine = ExecutionEngine()
 
     for i in range(100, len(df)):
