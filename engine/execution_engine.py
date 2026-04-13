@@ -6,14 +6,12 @@ class ExecutionEngine:
         self.fee = 0.001
 
     def execute(self, signal, price):
-        # BUY
         if signal == "BUY" and self.position == 0:
             self.position = (self.balance * (1 - self.fee)) / price
             self.entry_price = price
             self.balance = 0
             print(f"BUY @ {price}")
 
-        # SELL / EXIT
         elif self.position > 0:
             change = (price - self.entry_price) / self.entry_price
 
