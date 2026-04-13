@@ -1,23 +1,23 @@
-class ExecutionEngine:
-    def __init__(self):
-        self.balance = 1000
-        self.position = 0
-        self.entry_price = 0
-        self.fee = 0.001
+class StrategyEngine:
+    def __init__(self, strategies, weights, threshold=1):
+        self.strategies = strategies
+        self.weights = weights
+        self.threshold = threshold
 
-    def execute(self, signal, price):
-        # BUY
-        if signal == "BUY" and self.position == 0:
-            self.position = (self.balance * (1 - self.fee)) / price
-            self.entry_price = price
-            self.balance = 0
-            print(f"BUY @ {price}")
+    def get_signal(self, df):
+        score = 0
 
-        # SELL / EXIT
-        elif self.position > 0:
-            change = (price - self.entry_price) / self.entry_price
+        for strategy, weight in zip(self.strategies, self.weights):
+            signal = strategy.generate_signal(df)
 
-            if signal == "SELL" or change <= -0.02 or change >= 0.04:
-                self.balance = self.position * price * (1 - self.fee)
-                self.position = 0
-                print(f"SELL @ {price}")
+            if signal == "BUY":
+                score += weight
+            elif signal == "SELL":
+                score -= weight
+
+        if score >= self.threshold:
+            return "BUY"
+        elif score <= -self.threshold:
+            return "SELL"
+
+        return "HOLD"
